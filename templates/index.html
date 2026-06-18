@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home | Expense Tracker
+{% endblock %}
+
+{% block content %}
+
+<section class="text-center py-20">
+
+    <h1 class="text-5xl font-bold text-gray-900">
+
+        Track Every Rupee.
+
+    </h1>
+
+    <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
+
+        Manage your daily expenses, monitor savings, and build better financial habits with a simple and beautiful expense tracker.
+
+    </p>
+
+    <div class="mt-8">
+
+        <a href="/add-expense"
+           class="bg-emerald-600 text-white px-8 py-3 rounded-xl hover:bg-emerald-700 transition">
+
+            Get Started
+
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}
