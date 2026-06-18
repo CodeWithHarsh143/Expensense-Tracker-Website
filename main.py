@@ -13,8 +13,24 @@ import smtplib
 import os
 from dotenv import load_dotenv
 from datetime import date
+load_dotenv()
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.environ.get("secret_key")
+class Base(DeclarativeBase):
+  pass
 
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+  "DBI_URI",
+  "sqlite:///Expenses.db"
+)
+db = SQLAlchemy(model_class=Base)
+db.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+# User DataBase
+class User(db.Model , UserMixin):
+  __tablename__ = "users"
+  
 @app.route("/")
 def home():
     return render_template("index.html")
