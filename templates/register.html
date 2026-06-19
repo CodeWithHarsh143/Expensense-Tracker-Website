@@ -1,97 +1,81 @@
-{% extends "base.html" %}
-
-{% block title %}
-Register
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %} Register {% endblock %} {% block
+content %}
 
 <div class="flex items-center justify-center min-h-[80vh]">
+  <div
+    class="w-full max-w-5xl bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl grid lg:grid-cols-2"
+  >
+    <!-- Left Section -->
 
-    <div class="w-full max-w-5xl bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl grid lg:grid-cols-2">
+    <div
+      class="hidden lg:flex flex-col justify-center p-12 bg-gradient-to-br from-emerald-600 to-emerald-800"
+    >
+      <h1 class="text-5xl font-bold text-white">Expense Tracker</h1>
 
-        <!-- Left Section -->
-
-        <div class="hidden lg:flex flex-col justify-center p-12 bg-gradient-to-br from-emerald-600 to-emerald-800">
-
-            <h1 class="text-5xl font-bold text-white">
-
-                Expense Tracker
-
-            </h1>
-
-            <p class="mt-6 text-emerald-100 text-lg">
-
-                Track every rupee, understand your spending habits,
-                and achieve your financial goals with ease.
-
-            </p>
-
-        </div>
-
-        <!-- Right Section -->
-
-        <div class="p-10">
-
-            <h2 class="text-3xl font-bold text-white">
-
-                Create Account
-
-            </h2>
-
-            <p class="text-gray-400 mt-2">
-
-                Start managing your finances today.
-
-            </p>
-
-            <form class="mt-8 space-y-5">
-
-                <input
-                    type="text"
-                    placeholder="Full Name"
-                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
-
-                <input
-                    type="email"
-                    placeholder="Email Address"
-                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
-
-                <input
-                    type="password"
-                    placeholder="Password"
-                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
-
-                <input
-                    type="password"
-                    placeholder="Confirm Password"
-                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
-
-                <button
-                    class="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-semibold py-3 rounded-xl transition">
-
-                    Create Account
-
-                </button>
-
-            </form>
-
-            <p class="text-center text-gray-400 mt-6">
-
-                Already have an account?
-
-                <a href="/login" class="text-emerald-400 hover:underline">
-
-                    Login
-
-                </a>
-
-            </p>
-
-        </div>
-
+      <p class="mt-6 text-emerald-100 text-lg">
+        Track every rupee, understand your spending habits, and achieve your
+        financial goals with ease.
+      </p>
     </div>
 
+    <!-- Right Section -->
+     <div class="p-10">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="space-y-3 mb-4">
+        {% for category, message in messages %}
+
+        <div
+          class="px-4 py-3 rounded-lg text-sm font-medium {% if category == 'success' %} bg-emerald-500/20 text-emerald-300 border border-emerald-500 {% elif category == 'danger' %} bg-red-500/20 text-red-300 border border-red-500 {% elif category == 'warning' %} bg-yellow-500/20 text-yellow-300 border border-yellow-500 {% else %} bg-blue-500/20 text-blue-300 border border-blue-500 {% endif %}"
+        >
+          {{ message }}
+        </div>
+
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+    <div class="p-10">
+      <h2 class="text-3xl font-bold text-white">Create Account</h2>
+
+      <p class="text-gray-400 mt-2">Start managing your finances today.</p>
+
+      <form class="mt-8 space-y-5" method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+         {{ form.name() }}
+          {% for error in form.name.errors %}
+        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+      {% endfor %}
+      </div>
+        <div>
+          {{ form.email() }}
+          {% for error in form.email.errors %}
+        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+      {% endfor %}
+        </div>
+        <div>
+          {{ form.password() }}
+          {% for error in form.password.errors %}
+          <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div>
+          {{ form.conformed_password() }}
+          {% for error in form.conformed_password.errors %}
+          <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div>
+        {{ form.submit() }}
+        </div>
+      </form>
+      <p class="text-center text-gray-400 mt-6">
+        Already have an account?
+
+        <a href="/login" class="text-emerald-400 hover:underline"> Login </a>
+      </p>
+    </div>
+  </div>
 </div>
 
 {% endblock %}
