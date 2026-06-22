@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField , EmailField , PasswordField,IntegerField
+from wtforms import StringField, SubmitField , EmailField , PasswordField,IntegerField,FloatField,DateField,SelectField,TextAreaField
 from wtforms.validators import DataRequired, URL , Email, EqualTo, Length
 
 class RegisterForm(FlaskForm):
@@ -58,3 +58,53 @@ class ForgotPasswordForm(FlaskForm):
             "class": "w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:shadow-outline"
         }
     )
+
+class AddExpenseForm(FlaskForm):
+  expense_title = StringField(validators=[DataRequired()],render_kw={
+    "placeholder":"e.g Pizza,Uber Ride",
+    "class":"w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500"
+  })
+
+  amount = FloatField(validators=[DataRequired()],render_kw={
+    "placeholder":"0.00",
+    "class":"w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500"
+  })
+
+  date = DateField(validators=[DataRequired()],format="%Y-%m-%d",render_kw={
+    "class":"w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500"
+  })
+
+  category = SelectField(
+    choices=[
+        # (value , label)
+        ("food", "Food"),
+        ("transport", "Transport"),
+        ("shopping", "Shopping"),
+        ("entertainment", "Entertainment"),
+        ("bill","Bills"),
+        ("healthcare","HealthCare"),
+        ("other","Other")
+    ],
+    render_kw={
+      "class":"w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500",
+    }
+  )
+  note = TextAreaField(
+  render_kw={
+    "class":"w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-emerald-500",
+    "placeholder":"Optional Notes"
+  }
+  )
+  submit = SubmitField(
+  "Save Expense",
+  render_kw={
+    "class":"px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold rounded-lg transition"
+  }
+  )
+
+
+
+
+
+
+
