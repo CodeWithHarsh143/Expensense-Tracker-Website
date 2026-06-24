@@ -1,3 +1,4 @@
 {
-  "liveServer.settings.multiRootWorkspaceName": "Expensive-Tracker"
+  "liveServer.settings.multiRootWorkspaceName": "Expensive-Tracker",
+  "python.REPL.enableREPLSmartSend": false
 }

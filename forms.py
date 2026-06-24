@@ -102,6 +102,20 @@ class AddExpenseForm(FlaskForm):
   }
   )
 
+class ReportForm(FlaskForm):
+    start_date = DateField(
+        validators=[DataRequired()],
+        format="%Y-%m-%d",
+
+    )
+    end_date = DateField(
+        validators=[DataRequired()],
+        format="%Y-%m-%d",
+    )
+    submit = SubmitField(
+        "Generate Report",
+    )
+
 
 
 
