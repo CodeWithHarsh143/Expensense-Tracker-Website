@@ -1,140 +1,123 @@
-{% block content %}
+{% extends "base.html" %} {% block title %}Reports{% endblock %} {% block
+content %}
 
 <div class="max-w-7xl mx-auto px-6 py-10">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold text-white">Reports</h1>
+    <p class="text-slate-400 mt-2">
+      Analyze your spending patterns and trends.
+    </p>
+  </div>
 
-    <div class="mb-8">
-        <h1 class="text-4xl font-bold text-white">
-            Reports
-        </h1>
-        <p class="text-slate-400 mt-2">
-            Analyze your spending patterns and trends.
-        </p>
+  <!-- Filters -->
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-8">
+    <form method="POST" class="grid md:grid-cols-3 gap-6">
+      <div>
+        {{ form.hidden_tag() }}
+        <label class="block text-slate-300 mb-2"> From Date </label>
+
+        {{form.start_date(class_="w-full bg-slate-800 border border-slate-700
+        rounded-lg px-4 py-3 text-white")}} {% for error in
+        form.start_date.errors %}
+        <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div>
+        <label class="block text-slate-300 mb-2"> To Date </label>
+
+        {{form.end_date(class_="w-full bg-slate-800 border border-slate-700
+        rounded-lg px-4 py-3 text-white")}} {% for error in form.end_date.errors
+        %}
+        <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="flex items-end">
+        {{form.submit(class_="bg-emerald-400 text-white px-6 py-3 rounded-lg
+        hover:bg-emerald-500 transition-colors")}}
+      </div>
+    </form>
+  </div>
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for category, message in messages %}
+  <div
+    class="bg-{{ 'green' if category == 'success' else 'red' }}-900 border border-{{ 'green' if category == 'success' else 'red' }}-700 rounded-2xl p-6 mb-8"
+  >
+    <p class="text-white">{{ message }}</p>
+  </div>
+  {% endfor %} {% endif %} {% endwith %}
+
+  <!-- Charts -->
+  {% if show_chards %}
+  <div class="grid lg:grid-cols-2 gap-8 mb-8">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <h2 class="text-xl font-semibold text-white mb-4">
+        Spending By Category
+      </h2>
+
+      <canvas id="categoryChart"></canvas>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <h2 class="text-xl font-semibold text-white mb-4">Monthly Trend</h2>
+
+      <canvas id="monthlyChart"></canvas>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Summary Cards -->
+  {% if show_cards %}
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <h3 class="text-slate-400">Total Expenses</h3>
+
+      <p class="text-3xl font-bold text-emerald-400 mt-2">
+        ₹{{ total_expense }}
+      </p>
     </div>
 
-    <!-- Filters -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-8">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <h3 class="text-slate-400">Highest Category</h3>
 
-        <form method="GET" class="grid md:grid-cols-3 gap-6">
-
-            <div>
-                <label class="block text-slate-300 mb-2">
-                    From Date
-                </label>
-
-                <input type="date"
-                       name="start_date"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white">
-            </div>
-
-            <div>
-                <label class="block text-slate-300 mb-2">
-                    To Date
-                </label>
-
-                <input type="date"
-                       name="end_date"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white">
-            </div>
-
-            <div class="flex items-end">
-
-                <button type="submit"
-                        class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-3 rounded-lg">
-                    Generate Report
-                </button>
-
-            </div>
-
-        </form>
-
+      <p class="text-3xl font-bold text-white mt-2">{{ highest_category }}</p>
     </div>
 
-    <!-- Charts -->
-    <div class="grid lg:grid-cols-2 gap-8 mb-8">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <h3 class="text-slate-400">Total Transactions</h3>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-xl font-semibold text-white mb-4">
-                Spending By Category
-            </h2>
-
-            <canvas id="categoryChart"></canvas>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-xl font-semibold text-white mb-4">
-                Monthly Trend
-            </h2>
-
-            <canvas id="monthlyChart"></canvas>
-        </div>
-
+      <p class="text-3xl font-bold text-white mt-2">{{ transaction_count }}</p>
     </div>
-
-    <!-- Summary Cards -->
-    <div class="grid md:grid-cols-3 gap-6">
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <h3 class="text-slate-400">
-                Total Expenses
-            </h3>
-
-            <p class="text-3xl font-bold text-emerald-400 mt-2">
-                ₹{{ total_expense }}
-            </p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <h3 class="text-slate-400">
-                Highest Category
-            </h3>
-
-            <p class="text-3xl font-bold text-white mt-2">
-                {{ highest_category }}
-            </p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <h3 class="text-slate-400">
-                Total Transactions
-            </h3>
-
-            <p class="text-3xl font-bold text-white mt-2">
-                {{ transaction_count }}
-            </p>
-        </div>
-
-    </div>
-
+  </div>
+  {% endif %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+{% if show_chards and show_cards %}
 <script>
 
-const categoryData = {{ category_data | tojson }};
-const monthlyData = {{ monthly_data | tojson }};
+  const categoryData = {{ category_data | tojson }};
+  const monthlyData = {{ monthly_data | tojson }};
 
-new Chart(document.getElementById("categoryChart"), {
-    type: "pie",
-    data: {
-        labels: Object.keys(categoryData),
-        datasets: [{
-            data: Object.values(categoryData)
-        }]
-    }
-});
+  new Chart(document.getElementById("categoryChart"), {
+      type: "pie",
+      data: {
+          labels: Object.keys(categoryData),
+          datasets: [{
+              data: Object.values(categoryData)
+          }]
+      }
+  });
 
-new Chart(document.getElementById("monthlyChart"), {
-    type: "bar",
-    data: {
-        labels: monthlyData.labels,
-        datasets: [{
-            label: "Expenses",
-            data: monthlyData.values
-        }]
-    }
-});
-
+  new Chart(document.getElementById("monthlyChart"), {
+      type: "bar",
+      data: {
+          labels: monthlyData.labels,
+          datasets: [{
+              label: "Expenses",
+              data: monthlyData.values
+          }]
+      }
+  });
 </script>
-
-{% endblock %}
+{% endif %} {% endblock %}
