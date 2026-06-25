@@ -6,7 +6,7 @@ from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user , login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text, ForeignKey , Float,Date
+from sqlalchemy import Integer, String, Text, ForeignKey , Float,Date,func
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 import smtplib
@@ -62,10 +62,8 @@ with app.app_context():
     db.create_all()
 @app.route("/")
 def home():
-    if(not current_user.is_authenticated):
-        flash("You need to login first to view your dashboard","info")
-    return render_template("index.html")
-
+    is_login = current_user.is_authenticated
+    return render_template("index1.html", is_login=is_login)
 @app.route("/login",methods = ["GET","POST"])
 def login():
     form = LoginForm()
@@ -272,7 +270,7 @@ def expense_analysis():
     if(not current_user.is_authenticated):
         flash("You need to login first to view your expenses","danger")
         return redirect(url_for("login"))
-    expenses = current_user.user_expenses
+    expenses = Expenses.query.filter_by(user_id=current_user.id).order_by(Expenses.date_feild.desc()).all()
     return render_template("expenses.html", expenses=expenses)
 @app.route("/edit_expense",methods=["GET","POST"])
 def edit_expense():
@@ -326,8 +324,45 @@ def dashboard():
     if(not current_user.is_authenticated):
         flash("You need to login first to view your dashboard","danger")
         return redirect(url_for("login"))
-    expenses = current_user.user_expenses
-    return render_template("dashboard.html", expenses=expenses)
+    today = date.today()
+    total_expense = (
+      db.session.query(func.sum(Expenses.amount)).scalar()
+    )
+    monthly_expense = (
+      db.session.query(func.sum(Expenses.amount)).filter(
+        Expenses.user_id == current_user.id,
+        func.strftime("%m",Expenses.date_feild) == today.strftime("%m"),
+        func.strftime("%Y",Expenses.date_feild) == today.strftime("%Y")
+      ).scalar()
+    )
+    today_expense=(
+      db.session.query(func.sum(Expenses.amount)).filter(
+        Expenses.user_id == current_user.id,
+        func.strftime("%d",Expenses.date_feild) == today.strftime("%d"),
+        func.strftime("%m",Expenses.date_feild) == today.strftime("%m"),
+        func.strftime("%Y",Expenses.date_feild) == today.strftime("%Y")
+      ).scalar()
+    )
+    recent_expenses = Expenses.query.filter_by(user_id=current_user.id).order_by(Expenses.date_feild.desc()).limit(5).all()
+    category_data ={}
+    amount_month = {}
+    expenses = Expenses.query.filter_by(user_id=current_user.id).order_by(Expenses.date_feild.asc()).all(
+    )
+    for expense in expenses:
+      if expense.category in category_data:
+        category_data[expense.category]+=1
+      else:
+        category_data[expense.category] = 1
+      if month_name[expense.date_feild.month] in amount_month:
+        amount_month[month_name[expense.date_feild.month]] += expense.amount
+      else:
+        amount_month[month_name[expense.date_feild.month]] = expense.amount
+
+    monthly_data = {
+      "labels": list(amount_month.keys()),
+      "values": list(amount_month.values())
+    }
+    return render_template("dashboard.html", recent_expenses=recent_expenses, category_data=category_data, monthly_data=monthly_data, total_expense=total_expense, monthly_expense=monthly_expense, today_expense=today_expense)
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
