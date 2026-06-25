@@ -1,0 +1,196 @@
+{% extends "base.html" %} {% block title %} Home {% endblock %} {% block content
+%} {%with messages = get_flashed_messages(with_categories=true)%} {% if messages
+%}
+<div class="max-w-7xl mx-auto px-6 mb-6">
+  {% for category, message in messages %}
+  <div
+    class="px-4 py-3 rounded-lg text-sm font-medium {% if category == 'success' %} bg-emerald-500/20 text-emerald-300 border border-emerald-500 {% elif category == 'danger' %} bg-red-500/20 text-red-300 border border-red-500 {% elif category == 'warning' %} bg-yellow-500/20 text-yellow-300 border border-yellow-500 {% else %} bg-blue-500/20 text-blue-300 border border-blue-500 {% endif %}"
+  >
+    {{ message }}
+  </div>
+</div>
+{% endfor %} {% endif %} {% endwith %}
+<!-- Hero Section -->
+<section class="min-h-[70vh] flex items-center justify-center">
+  <div class="text-center max-w-4xl mx-auto px-6">
+    <h1 class="text-6xl font-bold text-white mb-6">
+      Track Every
+      <span class="text-emerald-400">Rupee</span>
+    </h1>
+
+    <p class="text-xl text-slate-400 mb-8">
+      Take control of your finances with smart expense tracking, beautiful
+      reports and powerful insights.
+    </p>
+
+    {% if not is_login %}
+    <div class="flex justify-center gap-4">
+      <a
+        href="{{ url_for('register') }}"
+        class="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-8 py-4 rounded-xl transition"
+      >
+        Get Started
+      </a>
+
+      <a
+        href="{{ url_for('login') }}"
+        class="border border-slate-700 hover:border-emerald-500 px-8 py-4 rounded-xl transition"
+      >
+        Login
+      </a>
+    </div>
+    {% else %}
+    <div class="flex justify-center gap-4">
+      <a
+        href="{{ url_for('dashboard') }}"
+        class="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-8 py-4 rounded-xl transition"
+      >
+        Go to Dashboard
+      </a>
+  </div>
+  {% endif %}
+</section>
+
+<!-- Features -->
+<section class="max-w-7xl mx-auto px-6 py-20">
+  <div class="text-center mb-16">
+    <h2 class="text-4xl font-bold text-white mb-4">
+      Why Choose ExpenseTracker?
+    </h2>
+
+    <p class="text-slate-400 text-lg">
+      Everything you need to manage your personal finances.
+    </p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-8">
+    <!-- Feature 1 -->
+    <div
+      class="group bg-slate-900 border border-slate-800 rounded-2xl p-8 transition-all duration-300 ease-out hover:-translate-y-2 hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10"
+    >
+      <div
+        class="text-5xl mb-5 transition-transform duration-300 group-hover:scale-110"
+      >
+        💸
+      </div>
+
+      <h3 class="text-2xl font-semibold mb-3 text-white">Track Expenses</h3>
+
+      <p class="text-slate-400 leading-relaxed">
+        Record every expense, categorize your spending, and stay organized with
+        a clean and intuitive interface.
+      </p>
+    </div>
+
+    <!-- Feature 2 -->
+    <div
+      class="group bg-slate-900 border border-slate-800 rounded-2xl p-8 transition-all duration-300 ease-out hover:-translate-y-2 hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10"
+    >
+      <div
+        class="text-5xl mb-5 transition-transform duration-300 group-hover:scale-110"
+      >
+        📊
+      </div>
+
+      <h3 class="text-2xl font-semibold mb-3 text-white">Visual Reports</h3>
+
+      <p class="text-slate-400 leading-relaxed">
+        Analyze your spending habits with detailed charts and reports that help
+        you make smarter financial decisions.
+      </p>
+    </div>
+
+    <!-- Feature 3 -->
+    <div
+      class="group bg-slate-900 border border-slate-800 rounded-2xl p-8 transition-all duration-300 ease-out hover:-translate-y-2 hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10"
+    >
+      <div
+        class="text-5xl mb-5 transition-transform duration-300 group-hover:scale-110"
+      >
+        🎯
+      </div>
+
+      <h3 class="text-2xl font-semibold mb-3 text-white">Better Habits</h3>
+
+      <p class="text-slate-400 leading-relaxed">
+        Build healthy financial habits, control unnecessary expenses, and work
+        towards your savings goals with confidence.
+      </p>
+    </div>
+  </div>
+</section>
+<!-- How It Works -->
+<section class="max-w-7xl mx-auto px-6 py-20">
+  <div class="text-center mb-16">
+    <h2 class="text-4xl font-bold text-white mb-4">How It Works</h2>
+
+    <p class="text-slate-400">
+      Start tracking your expenses in three simple steps.
+    </p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-8">
+    <div class="text-center">
+      <div
+        class="w-16 h-16 bg-emerald-500 text-black font-bold text-2xl rounded-full flex items-center justify-center mx-auto mb-5"
+      >
+        1
+      </div>
+
+      <h3 class="text-xl font-semibold mb-3">Add Expense</h3>
+
+      <p class="text-slate-400">Quickly record your daily spending.</p>
+    </div>
+
+    <div class="text-center">
+      <div
+        class="w-16 h-16 bg-emerald-500 text-black font-bold text-2xl rounded-full flex items-center justify-center mx-auto mb-5"
+      >
+        2
+      </div>
+
+      <h3 class="text-xl font-semibold mb-3">Categorize</h3>
+
+      <p class="text-slate-400">
+        Organize expenses into meaningful categories.
+      </p>
+    </div>
+
+    <div class="text-center">
+      <div
+        class="w-16 h-16 bg-emerald-500 text-black font-bold text-2xl rounded-full flex items-center justify-center mx-auto mb-5"
+      >
+        3
+      </div>
+
+      <h3 class="text-xl font-semibold mb-3">Analyze</h3>
+
+      <p class="text-slate-400">
+        View reports and improve your spending habits.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="max-w-5xl mx-auto px-6 py-20">
+  <div
+    class="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center"
+  >
+    <h2 class="text-5xl font-bold mb-6">Start Managing Your Money Today</h2>
+
+    <p class="text-slate-400 text-lg mb-8">
+      Join thousands of users who track their expenses and make smarter
+      financial decisions.
+    </p>
+
+    <a
+      href="{{ url_for('register') }}"
+      class="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-8 py-4 rounded-xl"
+    >
+      Create Free Account
+    </a>
+  </div>
+</section>
+
+{% endblock %}

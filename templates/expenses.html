@@ -47,7 +47,7 @@ content %}
             </td>
 
             <td class="py-4 text-slate-300">
-              {{ expense.day }}-{{ expense.month }}-{{ expense.year }}
+              {{ expense.date_feild.strftime("%d %b, %Y") }}
             </td>
 
             <td class="py-4 text-slate-300">{{expense.note or "—"}}</td>
