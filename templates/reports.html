@@ -39,15 +39,7 @@ content %}
       </div>
     </form>
   </div>
-  {% with messages = get_flashed_messages(with_categories=true) %} {% if
-  messages %} {% for category, message in messages %}
-  <div
-    class="bg-{{ 'green' if category == 'success' else 'red' }}-900 border border-{{ 'green' if category == 'success' else 'red' }}-700 rounded-2xl p-6 mb-8"
-  >
-    <p class="text-white">{{ message }}</p>
-  </div>
-  {% endfor %} {% endif %} {% endwith %}
-
+  {% include "components/flash_message.html" %}
   <!-- Charts -->
   {% if show_chards %}
   <div class="grid lg:grid-cols-2 gap-8 mb-8">

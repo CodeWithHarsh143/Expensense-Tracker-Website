@@ -1,15 +1,5 @@
 {% extends "base.html" %} {% block title %} Home {% endblock %} {% block content
-%} {%with messages = get_flashed_messages(with_categories=true)%} {% if messages
-%}
-<div class="max-w-7xl mx-auto px-6 mb-6">
-  {% for category, message in messages %}
-  <div
-    class="px-4 py-3 rounded-lg text-sm font-medium {% if category == 'success' %} bg-emerald-500/20 text-emerald-300 border border-emerald-500 {% elif category == 'danger' %} bg-red-500/20 text-red-300 border border-red-500 {% elif category == 'warning' %} bg-yellow-500/20 text-yellow-300 border border-yellow-500 {% else %} bg-blue-500/20 text-blue-300 border border-blue-500 {% endif %}"
-  >
-    {{ message }}
-  </div>
-</div>
-{% endfor %} {% endif %} {% endwith %}
+  %}{% include "components/flash_message.html" %}
 <!-- Hero Section -->
 <section class="min-h-[70vh] flex items-center justify-center">
   <div class="text-center max-w-4xl mx-auto px-6">
@@ -173,6 +163,7 @@
 </section>
 
 <!-- CTA Section -->
+ {% if not is_login %}
 <section class="max-w-5xl mx-auto px-6 py-20">
   <div
     class="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center"
@@ -192,5 +183,6 @@
     </a>
   </div>
 </section>
+{% endif %}
 
 {% endblock %}
