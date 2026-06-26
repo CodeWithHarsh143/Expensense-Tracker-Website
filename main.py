@@ -175,6 +175,7 @@ def add_expense():
     )
     db.session.add(expense)
     db.session.commit()
+    flash("Expense added successfully!", "success")
     return redirect(url_for('expense_analysis'))
   else:
     print(form.errors)
@@ -343,6 +344,12 @@ def dashboard():
         func.strftime("%Y",Expenses.date_feild) == today.strftime("%Y")
       ).scalar()
     )
+    if(today_expense == None):
+      today_expense = 0
+    if(monthly_expense == None):
+      monthly_expense = 0
+    if(total_expense == None):
+      total_expense = 0
     recent_expenses = Expenses.query.filter_by(user_id=current_user.id).order_by(Expenses.date_feild.desc()).limit(5).all()
     category_data ={}
     amount_month = {}

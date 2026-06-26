@@ -1,34 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>
-        {% block title %}
-        Expense Tracker
-        {% endblock %}
-    </title>
+    <title>{% block title %} Expense Tracker {% endblock %}</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+  </head>
 
-</head>
-
-<body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col">
-
+  <body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col">
     {% include "components/navbar.html" %}
 
     <main class="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
-
-        {% block content %}
-        {% endblock %}
-
+      {% block content %} {% endblock %}
     </main>
 
     {% include "components/footer.html" %}
+    <script>
+      setTimeout(() => {
+        document.querySelectorAll(".flash-message").forEach((msg) => {
+          msg.style.transition = "opacity 0.5s";
+          msg.style.opacity = "0";
 
-</body>
-
+          setTimeout(() => {
+            msg.remove();
+          }, 500);
+        });
+      }, 3000);
+    </script>
+  </body>
 </html>
