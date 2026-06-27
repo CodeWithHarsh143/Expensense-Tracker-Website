@@ -370,6 +370,9 @@ def dashboard():
       "values": list(amount_month.values())
     }
     return render_template("dashboard.html", recent_expenses=recent_expenses, category_data=category_data, monthly_data=monthly_data, total_expense=total_expense, monthly_expense=monthly_expense, today_expense=today_expense)
+@app.route("/expense_analysis/filter",methods = ["GET","POST"])
+def filter_expenses():
+  pass
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
