@@ -14,9 +14,12 @@ from calendar import month_name
 import os
 from dotenv import load_dotenv
 from datetime import date
+import resend
 #forms
-from forms import ChangePasswordForm, RegisterForm , LoginForm , ForgotPasswordForm,AddExpenseForm,ReportForm
+from forms import ChangePasswordForm, ExpenseFilterForm, RegisterForm , LoginForm , ForgotPasswordForm,AddExpenseForm,ReportForm
 load_dotenv()
+FROM_EMAIL = os.environ.get("FROM_EMAIL")
+TO_EMAIL = os.environ.get("TO_EMAIL")
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("secret_key")
 class Base(DeclarativeBase):
@@ -74,6 +77,62 @@ def login():
         if user and check_password_hash(user.password, password):
             login_user(user)
             flash("Logged in successfully!", "success")
+            html = f"""
+            <!DOCTYPE html>
+            <html>
+
+            <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,sans-serif;">
+
+            <div style="max-width:650px;margin:40px auto;background:white;
+                        border-radius:12px;overflow:hidden;
+                        box-shadow:0 0 20px rgba(0,0,0,0.08);">
+
+                <div style="background:#0d6efd;padding:30px;text-align:center;color:white;">
+                    <h1 style="margin:0;">📩 Expenses Tracker</h1>
+                    <p style="margin-top:10px;font-size:16px;">
+                        User login
+                    </p>
+                </div>
+
+                <div style="padding:35px;">
+
+                    <table style="width:100%;border-collapse:collapse;font-size:16px;">
+
+                        <tr>
+                            <td style="padding:10px;font-weight:bold;width:120px;">
+                                👤 Name
+                            </td>
+
+                            <td style="padding:10px;">
+                                {user.name}
+                            </td>
+                        </tr>
+
+                        <tr style="background:#f8f9fa;">
+                            <td style="padding:10px;font-weight:bold;">
+                                📧 Email
+                            </td>
+
+                            <td style="padding:10px;">
+                                {user.email}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+              </div>
+            </body>
+            </html>
+            """
+            try:
+
+                resend.Emails.send({
+                    "from": f"Expense Tracker <{FROM_EMAIL}>",
+                    "to": [TO_EMAIL],
+                    "subject": f"📩 New User: {user.name}",
+                    "html": html
+                })
+            except Exception as e:
+              print(e)
             return redirect(url_for("home"))
         else:
             flash("Invalid email or password. Please try again.", "danger")
@@ -266,13 +325,44 @@ def reports():
   except Exception as e:
     print(e)
   return render_template("reports.html",form = form,total_expense=total_expense,highest_category=highest_category,transaction_count=transaction_count,category_data=category_data,monthly_data=monthly_data,show_chards=show_chards,show_cards=show_cards)
-@app.route("/expense_analysis")
+@app.route("/expense_analysis",methods = ["GET","POST"])
 def expense_analysis():
     if(not current_user.is_authenticated):
         flash("You need to login first to view your expenses","danger")
         return redirect(url_for("login"))
-    expenses = Expenses.query.filter_by(user_id=current_user.id).order_by(Expenses.date_feild.desc()).all()
-    return render_template("expenses.html", expenses=expenses)
+    form = ExpenseFilterForm(request.args)
+    query = Expenses.query.filter_by(user_id=current_user.id)
+    if request.args:
+      sort = form.sort.data
+      max_amount = form.max_amount.data or int(1e9)  # Set a
+      min_amount = form.min_amount.data or 0  # Set a default min amount if not provided
+      start_date = form.from_date.data or date.min
+      end_date = form.to_date.data or date.max
+      category = form.category.data
+      search_notes = form.note.data or ""
+      search_title = form.title.data or ""
+      query = query.filter(
+        Expenses.amount.between(min_amount ,max_amount),
+        Expenses.date_feild.between(start_date,end_date),
+      )
+      if category:
+        query = query.filter(Expenses.category == category)
+      if search_notes:
+          query = query.filter(Expenses.note == search_notes)
+      if search_title:
+          query = query.filter(Expenses.expense_title == search_title)
+      if sort == "latest":
+        query = query.order_by(Expenses.date_feild.desc())
+      elif sort == "oldest":
+        query = query.order_by(Expenses.date_feild.asc())
+      elif sort == "high":
+        query = query.order_by(Expenses.amount.desc())
+      else:
+        query = query.order_by(Expenses.amount.asc())
+    else:
+     query = query.order_by(Expenses.date_feild.desc())
+    query = query.all()
+    return render_template("expenses.html", expenses=query,form=form)
 @app.route("/edit_expense",methods=["GET","POST"])
 def edit_expense():
   expense_id = request.args.get("id")
@@ -370,9 +460,7 @@ def dashboard():
       "values": list(amount_month.values())
     }
     return render_template("dashboard.html", recent_expenses=recent_expenses, category_data=category_data, monthly_data=monthly_data, total_expense=total_expense, monthly_expense=monthly_expense, today_expense=today_expense)
-@app.route("/expense_analysis/filter",methods = ["GET","POST"])
-def filter_expenses():
-  pass
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))

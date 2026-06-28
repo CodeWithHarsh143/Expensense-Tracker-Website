@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField , EmailField , PasswordField,IntegerField,FloatField,DateField,SelectField,TextAreaField
-from wtforms.validators import DataRequired, URL , Email, EqualTo, Length
+from wtforms import DecimalField, StringField, SubmitField , EmailField , PasswordField,IntegerField,FloatField,DateField,SelectField,TextAreaField
+from wtforms.validators import DataRequired, URL , Email, EqualTo, Length,Optional
 
 class RegisterForm(FlaskForm):
     email = EmailField("Email",render_kw={"placeholder": "Email" , "class": "w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500"}, validators=[DataRequired(), Email()])
@@ -116,7 +116,41 @@ class ReportForm(FlaskForm):
         "Generate Report",
     )
 
+class ExpenseFilterForm(FlaskForm):
+    title = StringField("Search Title", validators=[Optional()])
+    note = StringField("Search Note", validators=[Optional()])
+    category = SelectField(
+        "Category",
+        validators=[Optional()],
+        choices=[
+            ("", "All Categories"),
+            ("food", "Food"),
+            ("travel", "Travel"),
+            ("shopping", "Shopping"),
+            ("bills", "Bills"),
+            ("entertainment", "Entertainment"),
+            ("health", "Health"),
+            ("other", "Other"),
+        ],
+    )
 
+    from_date = DateField("From Date", validators=[Optional()], format="%Y-%m-%d")
+    to_date = DateField("To Date", validators=[Optional()], format="%Y-%m-%d")
+
+    min_amount = DecimalField("Min Amount", validators=[Optional()], places=2)
+    max_amount = DecimalField("Max Amount", validators=[Optional()], places=2)
+
+    sort = SelectField(
+        "Sort By",
+        choices=[
+            ("latest", "Newest First"),
+            ("oldest", "Oldest First"),
+            ("high", "Highest Amount"),
+            ("low", "Lowest Amount"),
+        ],
+    )
+
+    submit = SubmitField("Apply Filters")
 
 
 
