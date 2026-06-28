@@ -1,0 +1,13 @@
+Flask
+Flask-Bootstrap
+Flask-CKEditor
+Flask-Gravatar
+Flask-Login
+Flask-SQLAlchemy
+Flask-WTF
+WTForms
+SQLAlchemy
+Werkzeug
+python-dotenv
+resend
+email-validator
